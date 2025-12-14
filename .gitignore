@@ -1,0 +1,5 @@
+# In case you want to deploy using Git
+
+node_modules
+.env
+dist
