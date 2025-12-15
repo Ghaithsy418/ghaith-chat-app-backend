@@ -89,13 +89,13 @@ userSchema.virtual('fullName').get(function () {
     .join(' ');
 });
 
-userSchema.pre(/^find/, function (next) {
-  (this as any).populate({
-    path: 'friends.user',
-    select: '-email -emailVerified -phoneNumber -createdAt -updatedAt -friends',
-  });
-  next();
-});
+// userSchema.pre(/^find/, function (next) {
+//   (this as any).populate({
+//     path: 'friends.user',
+//     select: '-email -emailVerified -phoneNumber -createdAt -updatedAt -friends',
+//   });
+//   next();
+// });
 
 const User = mongoose.model<UserSchemaTypes>('User', userSchema, 'user');
 

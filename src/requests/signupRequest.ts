@@ -12,9 +12,6 @@ export const signupSchema = z.object({
     .string('Password is required')
     .min(8, 'Password should contain at least 8 characters'),
   passwordConfirm: z.string('Please confirm your password'),
-  phoneNumber: z
-    .string()
-    .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid phone number'),
 });
 
 export type SignupInput = z.infer<typeof signupSchema>;

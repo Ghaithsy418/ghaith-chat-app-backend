@@ -1,8 +1,8 @@
 import { fromNodeHeaders } from 'better-auth/node';
 import { RequestHandler } from 'express';
 import { auth } from '../auth.js';
-import User from '../models/userModel.js';
 import { Session } from '../models/sessionModel.js';
+import User from '../models/userModel.js';
 
 export const routesProtecter: RequestHandler = async (req, res, next) => {
   const nodeHeaders = fromNodeHeaders(req.headers);
@@ -31,7 +31,7 @@ export const routesProtecter: RequestHandler = async (req, res, next) => {
       const user = await User.findOne({ _id: dbSession.userId });
 
       if (user) {
-        res.locals.user = user;
+        res.locals.user = { ...user, id: user._id };
         res.locals.session = dbSession;
         return next();
       }

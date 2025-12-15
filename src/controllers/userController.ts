@@ -43,7 +43,9 @@ export default class UserController {
     const infos = await User.findOne({ _id: id });
 
     if (!infos)
-      next(new AppError('Something went wrong when getting the profile!', 500));
+      return next(
+        new AppError('Something went wrong when getting the profile!', 500)
+      );
 
     res.status(200).json({
       status: 'success',

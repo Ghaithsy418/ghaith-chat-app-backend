@@ -28,6 +28,8 @@ export const auth = betterAuth({
       lastName: { type: 'string' },
       username: { type: 'string' },
       phoneNumber: { type: 'string' },
+      bio: { type: 'string' },
+      image: { type: 'string' },
     },
   },
   emailAndPassword: {
