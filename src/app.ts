@@ -4,6 +4,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 import AuthController from './controllers/authController.js';
 import ChatController from './controllers/chatController.js';
 import UserController from './controllers/userController.js';
@@ -27,7 +28,7 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 app.use(express.json({ limit: '10kb' }));
-app.use(express.static('/public'));
+app.use(express.static(path.join(import.meta.dirname, '../public')));
 app.use(
   cors({
     origin: ['http://localhost:3001'],
@@ -44,7 +45,7 @@ const chatRouter = createRouterForController(ChatController);
 
 app.use(authRouter);
 app.use(userRouter);
-app.use(chatRouter)
+app.use(chatRouter);
 
 app.all('*', (req, _res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} in this app`, 404));

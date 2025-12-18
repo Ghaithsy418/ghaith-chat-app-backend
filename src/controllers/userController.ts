@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
 import mongoose from 'mongoose';
 import { routesProtecter } from '../middlewares/protectingRoutes.js';
+import { userImage, userImageResize } from '../middlewares/uploadUserImage.js';
 import ChatRoom from '../models/chatRoomModel.js';
 import User from '../models/userModel.js';
 import AppError from '../utils/appError.js';
@@ -14,22 +16,39 @@ import {
 
 @Controller('/api/v1/')
 export default class UserController {
-  @Patch('users', routesProtecter)
-  public async updateProfile(req: Request, res: Response, next: NextFunction) {
+  @Patch('users', routesProtecter, userImage.single('image'), userImageResize)
+  public async updateProfile(req: Request, res: Response) {
     const { id } = res.locals.user;
 
-    if (req.body.email) next(new AppError("Email can't be edited", 400));
+    if (req.file) req.body.image = req.file.filename;
 
-    const newUser = await User.findByIdAndUpdate(id, req.body, {
-      new: true,
-      runValidators: true,
-    }).select('-__v ');
+    delete req.body.email;
+    delete req.body.password;
 
-    res.status(200).json({
-      status: 'success',
-      data: newUser,
-      message: 'Updated Successfully!',
-    });
+    try {
+      const oldUser = await User.findByIdAndUpdate(id, req.body, {
+        runValidators: true,
+      }).select('-__v ');
+
+      const dataToSend = { ...oldUser?.toObject(), ...req.body };
+
+      res.status(200).json({
+        status: 'success',
+        data: dataToSend,
+        message: 'Updated Successfully!',
+      });
+
+      if (req.file && oldUser?.image) {
+        if (oldUser.image !== req.file.filename) {
+          fs.unlink(`public/images/${oldUser.image}`, (err) => {
+            if (err) console.error('Background delete failed: ', err);
+          });
+        }
+      }
+    } catch (err) {
+      if (req.file) fs.unlink(`public/images/${req.file.filename}`, () => {});
+      throw err;
+    }
   }
 
   @Get('user-profile', routesProtecter)
