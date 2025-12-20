@@ -1,7 +1,6 @@
 import cors from 'cors';
 import express, { Express } from 'express';
 import mongoSanitize from 'express-mongo-sanitize';
-import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
@@ -15,17 +14,21 @@ import { createRouterForController } from './utils/decorators/createRouter.js';
 export const app: Express = express();
 
 app.set('trust proxy', true);
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
 
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: 'You have sent many requests, Please send requests again later!',
-  validate: { trustProxy: false },
-});
-app.use('/api', limiter);
+// const limiter = rateLimit({
+//   max: 100,
+//   windowMs: 60 * 60 * 1000,
+//   message: 'You have sent many requests, Please send requests again later!',
+//   validate: { trustProxy: false },
+// });
+// app.use('/api', limiter);
 
 app.use(express.json({ limit: '10kb' }));
 app.use(express.static(path.join(import.meta.dirname, '../public')));

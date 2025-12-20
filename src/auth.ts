@@ -9,8 +9,8 @@ const db = client.db();
 
 export const auth = betterAuth({
   database: mongodbAdapter(db as any),
-  baseURL: process.env.BACKEND_URL!,
-  trustedOrigins: [process.env.BACKEND_URL!, 'http:localhost:3001'],
+  baseURL: process.env.BETTER_AUTH_URL!,
+  trustedOrigins: [process.env.BETTER_AUTH_URL!, 'http:localhost:3001'],
   secret: process.env.BETTER_AUTH_SECRET,
   advanced: {
     useSecureCookies: false,

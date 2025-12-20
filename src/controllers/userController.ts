@@ -7,6 +7,7 @@ import { userImage, userImageResize } from '../middlewares/uploadUserImage.js';
 import ChatRoom from '../models/chatRoomModel.js';
 import User from '../models/userModel.js';
 import AppError from '../utils/appError.js';
+import { createPhotoUrl } from '../utils/createPhotoUrl.js';
 import {
   Controller,
   Get,
@@ -20,7 +21,7 @@ export default class UserController {
   public async updateProfile(req: Request, res: Response) {
     const { id } = res.locals.user;
 
-    if (req.file) req.body.image = req.file.filename;
+    if (req.file) req.body.image = createPhotoUrl(req.file.filename);
 
     delete req.body.email;
     delete req.body.password;
