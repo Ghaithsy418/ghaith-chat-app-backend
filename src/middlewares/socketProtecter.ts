@@ -25,10 +25,8 @@ export const socketProtector = async (
     const authHeader =
       socket.handshake.auth.token || socket.request.headers.authorization;
 
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const rawToken = authHeader.split(' ')[1];
-
-      const dbSession = await Session.findOne({ token: rawToken });
+    if (authHeader) {
+      const dbSession = await Session.findOne({ token: authHeader });
 
       if (dbSession) {
         if (new Date() > new Date(dbSession.expiresAt)) {

@@ -42,9 +42,12 @@ io.on('connection', (socket) => {
 
   socket.on('send_message', async (data) => {
     try {
+      const chatRoomId = new mongoose.Types.ObjectId(data.chatRoomId);
+      const sender = new mongoose.Types.ObjectId(data.sender);
+
       const newMessage = await Message.create({
-        chatRoomId: data.roomId,
-        sender: data.senderId,
+        chatRoomId,
+        sender,
         content: data.content,
       });
 
@@ -53,7 +56,7 @@ io.on('connection', (socket) => {
         'firstName middleName lastName image'
       );
 
-      io.to(data.roomId).emit('receive_message', newMessage);
+      io.to(data.chatRoomId).emit('receive_message', newMessage);
     } catch (err) {
       console.error('Error saving message: ', err);
       socket.emit('error', 'Message could not be sent.');

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Document, Types } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 import { routesProtecter } from '../middlewares/protectingRoutes.js';
 import ChatRoom from '../models/chatRoomModel.js';
 import { Message } from '../models/messageModel.js';
@@ -74,7 +74,13 @@ export default class ChatController {
 
     if (!roomId) return next(new AppError('roomId is required', 400));
 
-    const messages = await Message.find({ chatRoomId: roomId });
+    const newRoomId = new mongoose.Types.ObjectId(roomId);
+
+    const messages = await Message.find({
+      chatRoomId: newRoomId,
+    });
+
+    console.log(messages, roomId, newRoomId);
 
     res.status(200).json({
       status: 'success',
